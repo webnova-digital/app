@@ -6,104 +6,153 @@
     <title>🍊 Мандариновая Ферма</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
-        body {
+        * {
+            box-sizing: border-box;
             margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            background: #0a0e1a;
+            background-image: 
+                radial-gradient(circle at 15% 25%, rgba(255, 140, 0, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 85% 75%, rgba(138, 43, 226, 0.06) 0%, transparent 50%),
+                linear-gradient(145deg, #0a0e1a 0%, #141b2b 100%);
+            color: #e8e8e8;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             min-height: 100vh;
-            background: #0b0e17;
-            background-image: radial-gradient(circle at 20% 30%, rgba(255,140,0,0.08) 0%, transparent 40%),
-                              radial-gradient(circle at 80% 70%, rgba(138,43,226,0.08) 0%, transparent 40%);
-            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
-            color: #f0f0f0;
             display: flex;
             justify-content: center;
+            align-items: center;
             padding: 8px;
+            user-select: none;
+            -webkit-user-select: none;
         }
+
         #app {
             max-width: 420px;
             width: 100%;
+            height: 100vh;
+            max-height: 800px;
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            max-height: 780px;
             gap: 8px;
+            padding: 4px 0;
         }
 
-        /* TOP */
+        /* TOP PANEL */
         .top-panel {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(12,16,26,0.6);
-            backdrop-filter: blur(8px);
-            padding: 8px 14px;
+            padding: 6px 12px;
+            background: rgba(16, 20, 34, 0.7);
+            backdrop-filter: blur(12px);
             border-radius: 30px;
-            border: 1px solid rgba(255,180,70,0.15);
+            border: 1px solid rgba(255, 180, 70, 0.08);
         }
         .level-badge {
-            background: rgba(255,160,20,0.12);
-            border: 1px solid rgba(255,160,20,0.3);
+            background: rgba(255, 160, 20, 0.12);
+            border: 1px solid rgba(255, 160, 20, 0.25);
             border-radius: 30px;
             padding: 5px 14px;
-            font-weight: 700;
             font-size: 13px;
+            font-weight: 700;
             color: #ffb347;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         .level-badge:active { transform: scale(0.95); }
+        .level-progress {
+            width: 60px;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .level-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff8c00, #ffcc66);
+            transition: width 0.3s;
+        }
         .rewards-btn {
-            background: linear-gradient(145deg, #ff8c00, #e65c00);
+            background: linear-gradient(135deg, #ff8c00, #e65c00);
             border: none;
             color: white;
-            font-weight: 700;
-            font-size: 12px;
-            padding: 5px 14px;
+            padding: 6px 14px;
             border-radius: 30px;
-            box-shadow: 0 4px 12px rgba(255,90,0,0.3);
+            font-size: 12px;
+            font-weight: 700;
             cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 85, 0, 0.3);
+            transition: transform 0.1s;
         }
+        .rewards-btn:active { transform: scale(0.95); }
 
         /* BALANCE */
         .balance-card {
-            background: rgba(18,22,36,0.7);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.04);
-            border-radius: 28px;
-            padding: 14px 16px;
+            background: rgba(16, 20, 34, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 24px;
+            padding: 14px 16px 12px;
             text-align: center;
         }
         .balance-title {
             font-size: 10px;
+            text-transform: uppercase;
             letter-spacing: 2px;
             color: #8e9297;
-            text-transform: uppercase;
         }
         .balance-score {
-            font-size: 40px;
+            font-size: 42px;
             font-weight: 900;
             color: #ffb347;
-            text-shadow: 0 0 25px rgba(255,180,70,0.2);
-            margin: 2px 0 6px 0;
+            text-shadow: 0 0 30px rgba(255, 180, 70, 0.15);
+            margin: 2px 0 8px;
+            transition: all 0.2s;
+        }
+        .balance-score.pop {
+            animation: pop 0.15s ease;
+        }
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
         .stats-row {
             display: flex;
             justify-content: space-around;
-            background: rgba(0,0,0,0.3);
-            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
             padding: 6px 0;
-            font-size: 11px;
         }
-        .stat-item { text-align: center; flex:1; border-right:1px solid rgba(255,255,255,0.04); }
+        .stat-item {
+            text-align: center;
+            flex: 1;
+            border-right: 1px solid rgba(255,255,255,0.04);
+        }
         .stat-item:last-child { border: none; }
-        .stat-label { color: #8e9297; font-size: 9px; }
-        .stat-val { font-weight: 700; color: #fff; }
+        .stat-label {
+            font-size: 9px;
+            color: #8e9297;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .stat-val {
+            font-weight: 700;
+            font-size: 14px;
+            color: #fff;
+        }
 
         /* ENERGY */
         .energy-wrap {
-            background: rgba(12,16,26,0.5);
-            backdrop-filter: blur(4px);
-            border-radius: 40px;
+            background: rgba(16, 20, 34, 0.5);
+            backdrop-filter: blur(8px);
+            border-radius: 30px;
             padding: 6px 16px;
             border: 1px solid rgba(255,255,255,0.03);
         }
@@ -114,17 +163,17 @@
             color: #a0a4ab;
         }
         .energy-bar-bg {
-            height: 6px;
+            height: 5px;
             background: rgba(255,255,255,0.06);
             border-radius: 10px;
             margin-top: 3px;
+            overflow: hidden;
         }
         .energy-bar-fill {
             height: 100%;
-            width: 100%;
-            background: linear-gradient(90deg, #ff9f0a, #ffcd6c);
+            background: linear-gradient(90deg, #ff8c00, #ffcc66);
             border-radius: 10px;
-            transition: width 0.1s;
+            transition: width 0.15s ease;
         }
 
         /* TABS */
@@ -133,9 +182,15 @@
             flex: 1;
             flex-direction: column;
             overflow-y: auto;
-            padding-bottom: 4px;
+            padding: 4px 0;
+            animation: fadeSlide 0.25s ease;
         }
         .tab-content.active { display: flex; }
+
+        @keyframes fadeSlide {
+            0% { opacity: 0; transform: translateY(8px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
 
         #tab-clicker {
             align-items: center;
@@ -144,172 +199,312 @@
         .mandarin-btn {
             background: none;
             border: none;
-            font-size: 140px;
-            filter: drop-shadow(0 20px 30px rgba(255,140,0,0.4));
-            transition: transform 0.06s ease;
+            font-size: 150px;
             cursor: pointer;
+            filter: drop-shadow(0 20px 40px rgba(255, 140, 0, 0.3));
+            transition: transform 0.06s ease;
             animation: float 3s ease-in-out infinite;
         }
-        .mandarin-btn:active { transform: scale(0.87); }
+        .mandarin-btn:active { transform: scale(0.85); }
+        .mandarin-btn .tap-ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 180, 70, 0.2);
+            transform: scale(0);
+            animation: ripple 0.6s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes ripple {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
         @keyframes float {
-            0%,100% { transform: translateY(0); }
+            0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-8px); }
         }
 
         /* SHOP CARDS */
         .shop-card {
-            background: rgba(18,22,36,0.7);
+            background: rgba(16, 20, 34, 0.6);
             backdrop-filter: blur(8px);
             border: 1px solid rgba(255,255,255,0.04);
-            border-radius: 20px;
+            border-radius: 18px;
             padding: 12px 16px;
             margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: all 0.2s;
         }
-        .shop-info h4 { margin:0 0 4px; font-size:15px; }
-        .shop-info p { margin:0; font-size:11px; color:#8e9297; }
+        .shop-card:active { transform: scale(0.98); }
+        .shop-info h4 {
+            margin: 0 0 3px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .shop-info p {
+            margin: 0;
+            font-size: 11px;
+            color: #8e9297;
+        }
+        .shop-info .price {
+            color: #ffb347;
+            font-weight: 700;
+            margin-top: 3px;
+        }
         .shop-btn {
-            background: #ff9f0a;
+            background: linear-gradient(135deg, #ff9f0a, #f57c00);
             border: none;
-            color: #0b0e17;
+            color: #0a0e1a;
             font-weight: 800;
-            padding: 8px 14px;
+            padding: 8px 16px;
             border-radius: 30px;
             font-size: 12px;
             cursor: pointer;
-            transition: 0.1s;
-            box-shadow: 0 4px 12px rgba(255,160,20,0.2);
+            transition: all 0.15s;
+            box-shadow: 0 4px 15px rgba(255, 160, 20, 0.15);
+            min-width: 72px;
         }
         .shop-btn:active { transform: scale(0.92); }
+        .shop-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
 
         /* CASES */
         .case-box {
-            background: rgba(18,22,36,0.7);
+            background: rgba(16, 20, 34, 0.7);
             backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,200,100,0.15);
-            border-radius: 32px;
-            padding: 20px;
+            border: 1px solid rgba(255, 200, 100, 0.1);
+            border-radius: 28px;
+            padding: 24px 20px;
             text-align: center;
-            flex:1;
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
         }
+        .case-icon-wrap {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         .case-icon {
-            font-size: 70px;
-            margin-bottom: 6px;
+            font-size: 80px;
             transition: transform 0.3s;
         }
         .case-icon.spin {
-            animation: spin 0.8s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+            animation: caseSpin 1.2s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg) scale(0.6); }
-            50% { transform: rotate(360deg) scale(1.3); }
-            100% { transform: rotate(720deg) scale(1); }
+        @keyframes caseSpin {
+            0% { transform: rotate(0deg) scale(0.6); opacity: 0.3; }
+            30% { transform: rotate(120deg) scale(1.3); opacity: 1; }
+            60% { transform: rotate(240deg) scale(0.8); }
+            100% { transform: rotate(720deg) scale(1); opacity: 1; }
+        }
+        .case-icon.shake {
+            animation: shake 0.5s ease;
+        }
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-15deg); }
+            75% { transform: rotate(15deg); }
         }
         .case-btn {
             background: linear-gradient(145deg, #ff8c00, #d94f00);
             border: none;
             color: white;
             font-weight: 800;
-            padding: 12px 28px;
+            padding: 14px 32px;
             border-radius: 60px;
             font-size: 16px;
             margin: 12px 0 8px;
             width: 100%;
             cursor: pointer;
-            box-shadow: 0 6px 20px rgba(255,80,0,0.25);
+            box-shadow: 0 6px 25px rgba(255, 80, 0, 0.25);
+            transition: all 0.15s;
+        }
+        .case-btn:active { transform: scale(0.95); }
+        .case-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .case-result {
+            min-height: 30px;
+            font-weight: 700;
+            font-size: 16px;
+            color: #ffb347;
+            margin-top: 8px;
+        }
+        .case-result.win {
+            animation: winGlow 0.6s ease;
+        }
+        @keyframes winGlow {
+            0%, 100% { color: #ffb347; }
+            50% { color: #ffdd44; text-shadow: 0 0 30px rgba(255, 200, 50, 0.5); }
         }
 
         /* CLAN */
         .clan-card {
-            background: rgba(18,22,36,0.6);
-            border-radius: 24px;
-            padding: 14px;
+            background: rgba(16, 20, 34, 0.6);
+            backdrop-filter: blur(8px);
             border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 20px;
+            padding: 14px 16px;
             margin-bottom: 8px;
         }
         .leader-row {
             display: flex;
             justify-content: space-between;
-            padding: 6px 0;
+            padding: 6px 4px;
             border-bottom: 1px solid rgba(255,255,255,0.03);
             font-size: 13px;
+            transition: all 0.2s;
+        }
+        .leader-row:last-child { border: none; }
+        .leader-row.me {
+            background: rgba(255, 180, 70, 0.06);
+            border-radius: 10px;
+            padding: 6px 10px;
+        }
+        .leader-rank {
+            color: #8e9297;
+            font-weight: 700;
+            min-width: 30px;
         }
 
         /* BOTTOM NAV */
         .bottom-nav {
             display: flex;
-            background: rgba(10,13,22,0.85);
-            backdrop-filter: blur(10px);
-            border-radius: 40px;
-            border: 1px solid rgba(255,255,255,0.05);
-            padding: 4px 2px;
+            background: rgba(10, 13, 22, 0.9);
+            backdrop-filter: blur(12px);
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.04);
+            padding: 4px 4px;
             margin-top: auto;
         }
         .nav-item {
             background: none;
             border: none;
-            color: #7a7e87;
+            color: #6a6e7a;
             display: flex;
             flex-direction: column;
             align-items: center;
             font-size: 9px;
-            flex:1;
-            padding: 4px 0;
+            flex: 1;
+            padding: 6px 0;
             cursor: pointer;
-            transition: 0.15s;
+            transition: all 0.2s;
             border-radius: 30px;
+            position: relative;
         }
-        .nav-item .icon { font-size: 18px; margin-bottom: 1px; }
-        .nav-item.active { color: #ffb347; background: rgba(255,160,20,0.08); }
+        .nav-item .icon { font-size: 20px; margin-bottom: 1px; }
+        .nav-item .badge {
+            position: absolute;
+            top: 2px;
+            right: 20%;
+            background: #ff4444;
+            color: white;
+            font-size: 8px;
+            font-weight: 700;
+            border-radius: 10px;
+            padding: 1px 6px;
+            min-width: 16px;
+        }
+        .nav-item.active {
+            color: #ffb347;
+            background: rgba(255, 160, 20, 0.08);
+        }
+        .nav-item:active { transform: scale(0.92); }
 
-        /* FLOATING + ALERT */
-        #floatContainer { position: fixed; pointer-events: none; z-index: 999; top:0; left:0; width:100%; height:100%; }
+        /* FLOATING + TOAST */
+        #floatContainer {
+            position: fixed;
+            pointer-events: none;
+            z-index: 999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
         .float-text {
             position: absolute;
-            color: #ffb347;
             font-weight: 900;
-            font-size: 26px;
-            text-shadow: 0 0 20px rgba(255,160,0,0.5);
-            animation: floatUp 0.7s ease-out forwards;
+            font-size: 28px;
+            animation: floatUp 0.8s ease-out forwards;
+            text-shadow: 0 0 30px rgba(255, 160, 0, 0.4);
         }
         @keyframes floatUp {
-            0% { opacity:1; transform: translateY(0) scale(0.8); }
-            100% { opacity:0; transform: translateY(-90px) scale(1.4); }
+            0% { opacity: 1; transform: translateY(0) scale(0.6); }
+            100% { opacity: 0; transform: translateY(-100px) scale(1.4); }
         }
-        .alert-toast {
+        .toast {
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(10,14,24,0.96);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,180,70,0.3);
+            background: rgba(10, 14, 24, 0.96);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 180, 70, 0.2);
             padding: 10px 24px;
-            border-radius: 40px;
+            border-radius: 30px;
             color: #ffb347;
             font-weight: 600;
             font-size: 14px;
             z-index: 9999;
             display: none;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-            text-align: center;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.6);
             max-width: 90%;
+            text-align: center;
+        }
+        .toast.success { border-color: rgba(76, 209, 55, 0.3); color: #4cd137; }
+        .toast.error { border-color: rgba(255, 68, 68, 0.3); color: #ff4444; }
+
+        /* SCROLLBAR */
+        .tab-content::-webkit-scrollbar {
+            width: 3px;
+        }
+        .tab-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .tab-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 180, 70, 0.2);
+            border-radius: 10px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-height: 700px) {
+            .mandarin-btn { font-size: 110px; }
+            .balance-score { font-size: 32px; }
+            .case-icon { font-size: 60px; }
+        }
+        @media (max-height: 600px) {
+            .mandarin-btn { font-size: 80px; }
+            .balance-score { font-size: 28px; }
+            .balance-card { padding: 10px; }
+            .top-panel { padding: 4px 10px; }
         }
     </style>
 </head>
 <body>
-<div id="app">
-    <div id="alertToast" class="alert-toast">Уведомление</div>
 
+<div id="toast" class="toast">Уведомление</div>
+<div id="floatContainer"></div>
+
+<div id="app">
     <!-- TOP -->
     <div class="top-panel">
-        <div class="level-badge" id="lvlBadge" onclick="upgradeLevel()">🍊 Ур. <span id="levelNum">1</span> (⚡+1)</div>
+        <div class="level-badge" id="lvlBadge" onclick="upgradeLevel()">
+            🍊 Ур.<span id="levelNum">1</span>
+            <div class="level-progress"><div class="level-progress-fill" id="levelProgress" style="width:0%"></div></div>
+        </div>
         <button class="rewards-btn" onclick="switchTab('cases')">🎁 Кейсы <span id="casesLeft">5</span>/5</button>
     </div>
 
@@ -318,16 +513,16 @@
         <div class="balance-title">🍊 МАНДАРИНЫ</div>
         <div class="balance-score" id="score">0</div>
         <div class="stats-row">
-            <div class="stat-item"><div class="stat-label">ЗА ТАП</div><div class="stat-val" id="statPower">+1</div></div>
-            <div class="stat-item"><div class="stat-label">РЕГЕН</div><div class="stat-val" id="statRegen">10/с</div></div>
-            <div class="stat-item"><div class="stat-label">ДОХОД/С</div><div class="stat-val" id="statIncome">+0</div></div>
+            <div class="stat-item"><div class="stat-label">За тап</div><div class="stat-val" id="statPower">+1</div></div>
+            <div class="stat-item"><div class="stat-label">Реген</div><div class="stat-val" id="statRegen">10/с</div></div>
+            <div class="stat-item"><div class="stat-label">Доход/с</div><div class="stat-val" id="statIncome">+0</div></div>
         </div>
     </div>
 
     <!-- ENERGY -->
     <div class="energy-wrap" id="energyBoxUI">
         <div class="energy-head">
-            <span>⚡ Энергия (<span id="maxEnergyText">1000</span>)</span>
+            <span>⚡ Энергия <span id="maxEnergyText">1000</span></span>
             <span id="energyText">1000 / 1000</span>
         </div>
         <div class="energy-bar-bg"><div class="energy-bar-fill" id="energyBar" style="width:100%"></div></div>
@@ -336,154 +531,202 @@
     <!-- TABS -->
     <div id="tab-clicker" class="tab-content active" style="justify-content:center; align-items:center;">
         <button class="mandarin-btn" id="mandarinBtn">🍊</button>
-        <div style="margin-top:6px; font-size:13px; color:#8e9297;">👆 тапай</div>
+        <div style="margin-top:6px; font-size:12px; color:#6a6e7a;">👆 тапай для сбора</div>
     </div>
 
     <div id="tab-shop" class="tab-content">
-        <div class="shop-card"><div class="shop-info"><h4>👵 Бабушкина рассада</h4><p>+1 манд/сек</p><p style="color:#ffb347;font-size:12px;"><span id="p1Cost">50</span> 🍊</p></div><button class="shop-btn" onclick="buyUpgrade(1)">Купить</button></div>
-        <div class="shop-card"><div class="shop-info"><h4>🏡 Теплица в Сочи</h4><p>+5 манд/сек</p><p style="color:#ffb347;font-size:12px;"><span id="p2Cost">300</span> 🍊</p></div><button class="shop-btn" onclick="buyUpgrade(2)">Купить</button></div>
-        <div class="shop-card"><div class="shop-info"><h4>⚡ Сила тапа +1</h4><p>увеличивает силу клика</p><p style="color:#ffb347;font-size:12px;"><span id="p3Cost">100</span> 🍊</p></div><button class="shop-btn" onclick="buyUpgrade(3)">Кач</button></div>
-        <div class="shop-card"><div class="shop-info"><h4>🔋 Лимит энергии до 2000</h4><p>увеличить максимум</p><p style="color:#ffb347;font-size:12px;">5 000 🍊</p></div><button class="shop-btn" onclick="buyEnergyLimit()">Купить</button></div>
+        <div class="shop-card" id="shop1">
+            <div class="shop-info">
+                <h4>👵 Бабушкина рассада</h4>
+                <p>+1 манд/сек</p>
+                <div class="price">🍊 <span id="p1Cost">50</span></div>
+            </div>
+            <button class="shop-btn" onclick="buyUpgrade(1)">Купить</button>
+        </div>
+        <div class="shop-card" id="shop2">
+            <div class="shop-info">
+                <h4>🏡 Теплица в Сочи</h4>
+                <p>+5 манд/сек</p>
+                <div class="price">🍊 <span id="p2Cost">300</span></div>
+            </div>
+            <button class="shop-btn" onclick="buyUpgrade(2)">Купить</button>
+        </div>
+        <div class="shop-card" id="shop3">
+            <div class="shop-info">
+                <h4>⚡ Усиление тапа</h4>
+                <p>+1 к силе клика</p>
+                <div class="price">🍊 <span id="p3Cost">100</span></div>
+            </div>
+            <button class="shop-btn" onclick="buyUpgrade(3)">Кач</button>
+        </div>
+        <div class="shop-card" id="shop4">
+            <div class="shop-info">
+                <h4>🔋 Лимит энергии</h4>
+                <p>до 2000</p>
+                <div class="price">🍊 5 000</div>
+            </div>
+            <button class="shop-btn" onclick="buyEnergyLimit()">Купить</button>
+        </div>
     </div>
 
     <div id="tab-cases" class="tab-content">
         <div class="case-box">
-            <div class="case-icon" id="caseIcon">📦</div>
-            <h4 style="margin:4px 0 2px;">Премиум Кейс</h4>
+            <div class="case-icon-wrap">
+                <div class="case-icon" id="caseIcon">📦</div>
+            </div>
+            <h4 style="margin:4px 0 2px;">✨ Премиум Кейс</h4>
             <p style="color:#8e9297;font-size:13px;">Осталось: <span id="casesLeftText" style="color:#ffb347;font-weight:700;">5</span>/5</p>
             <p style="color:#ffb347;font-weight:700;font-size:15px;">10 000 🍊</p>
             <button class="case-btn" id="caseBtn" onclick="openCase()">🔥 ОТКРЫТЬ</button>
-            <div id="caseResult" style="margin-top:8px; min-height:28px; font-weight:700; color:#ffb347; font-size:16px;"></div>
+            <div class="case-result" id="caseResult"></div>
         </div>
     </div>
 
     <div id="tab-clan" class="tab-content">
         <div class="clan-card" style="text-align:center;">
-            <div style="font-size:40px;">🛡️</div>
+            <div style="font-size:36px;">🛡️</div>
             <h4 id="myClanName" style="margin:2px 0;">Без клана</h4>
-            <p style="color:#8e9297;font-size:12px;">Создать клан (30к 🍊) → +10% к доходу</p>
+            <p style="color:#8e9297;font-size:12px;">Создать клан (30к 🍊) → +10% доход</p>
             <button class="shop-btn" style="width:100%;margin-top:4px;" onclick="createClan()">Создать клан</button>
         </div>
         <div class="clan-card">
-            <h4 style="margin:0 0 8px;">🏆 ТОП лидеров (реальные)</h4>
+            <h4 style="margin:0 0 8px;">🏆 ТОП лидеров</h4>
             <div id="leaderboardList"></div>
         </div>
     </div>
 
-    <div id="tab-profile" class="tab-content" style="align-items:center; padding-top:12px;">
-        <div style="font-size:56px;">👤</div>
+    <div id="tab-profile" class="tab-content" style="align-items:center; padding-top:8px;">
+        <div style="font-size:52px;">👤</div>
         <h3 id="profileName" style="margin:2px;">Игрок</h3>
-        <p style="color:#8e9297;font-size:13px;" id="profileId">ID: ...</p>
-        <div class="shop-card" style="width:100%; margin-top:6px;"><div class="shop-info"><h4>Статус</h4><p id="profileSub" style="color:#ffb347;">Мандариновый фермер</p></div></div>
+        <p style="color:#8e9297;font-size:12px;" id="profileId">ID: ...</p>
+        <div class="shop-card" style="width:100%; margin-top:6px;">
+            <div class="shop-info">
+                <h4>📊 Статус</h4>
+                <p id="profileSub" style="color:#ffb347;font-weight:600;">Мандариновый фермер</p>
+            </div>
+        </div>
+        <div class="shop-card" style="width:100%;">
+            <div class="shop-info">
+                <h4>⏳ Подписка</h4>
+                <p id="profileSubExpire" style="color:#8e9297;">Неактивна</p>
+            </div>
+        </div>
     </div>
 
     <!-- BOTTOM NAV -->
     <nav class="bottom-nav">
-        <button class="nav-item active" onclick="switchTab('clicker',this)"><span class="icon">⚡</span><span>Тап</span></button>
-        <button class="nav-item" onclick="switchTab('shop',this)"><span class="icon">🏡</span><span>Ферма</span></button>
-        <button class="nav-item" onclick="switchTab('cases',this)"><span class="icon">🎁</span><span>Кейсы</span></button>
-        <button class="nav-item" onclick="switchTab('clan',this); renderLeaderboard();"><span class="icon">🛡️</span><span>Кланы</span></button>
-        <button class="nav-item" onclick="switchTab('profile',this)"><span class="icon">👤</span><span>Профиль</span></button>
+        <button class="nav-item active" onclick="switchTab('clicker',this)">
+            <span class="icon">⚡</span><span>Тап</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('shop',this)">
+            <span class="icon">🏡</span><span>Ферма</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('cases',this)">
+            <span class="icon">🎁</span><span>Кейсы</span>
+            <span class="badge" id="casesBadge">5</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('clan',this); loadLeaderboard();">
+            <span class="icon">🛡️</span><span>Кланы</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('profile',this); loadProfile();">
+            <span class="icon">👤</span><span>Профиль</span>
+        </button>
     </nav>
 </div>
 
-<div id="floatContainer"></div>
-
 <script>
+    // --- INIT ---
     let tg = window.Telegram.WebApp;
     tg.expand();
 
-    // --- USER ---
-    let userId = 0, userName = "player";
-    if (tg.initDataUnsafe?.user) {
-        userId = tg.initDataUnsafe.user.id;
-        userName = tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name || "player";
-        document.getElementById('profileName').innerText = tg.initDataUnsafe.user.first_name || 'Игрок';
-        document.getElementById('profileId').innerText = `ID: ${userId}`;
-    }
+    const userId = tg.initDataUnsafe?.user?.id || 0;
+    const userName = tg.initDataUnsafe?.user?.username || 
+                     tg.initDataUnsafe?.user?.first_name || 
+                     'Игрок';
+    const firstName = tg.initDataUnsafe?.user?.first_name || 'Игрок';
 
-    // --- STATE (persistent) ---
+    document.getElementById('profileName').innerText = firstName;
+    document.getElementById('profileId').innerText = `ID: ${userId}`;
+
+    // --- STATE ---
     let S = {
-        mandarins: parseFloat(localStorage.getItem('m_score')) || 0,
-        energy: parseFloat(localStorage.getItem('m_energy')) || 1000,
-        maxEnergy: parseInt(localStorage.getItem('m_maxEnergy')) || 1000,
-        clickPower: parseInt(localStorage.getItem('m_power')) || 1,
-        income: parseInt(localStorage.getItem('m_income')) || 0,
-        level: parseInt(localStorage.getItem('m_level')) || 1,
-        clan: localStorage.getItem('m_clan') || '',
-        p1: parseInt(localStorage.getItem('m_p1')) || 0,
-        p2: parseInt(localStorage.getItem('m_p2')) || 0,
-        c1: parseInt(localStorage.getItem('m_c1')) || 50,
-        c2: parseInt(localStorage.getItem('m_c2')) || 300,
-        c3: parseInt(localStorage.getItem('m_c3')) || 100,
-        casesToday: parseInt(localStorage.getItem('m_cases')) || 0,
-        // daily reset check
-        lastDate: localStorage.getItem('m_lastDate') || ''
+        mandarins: 0,
+        energy: 1000,
+        maxEnergy: 1000,
+        clickPower: 1,
+        income: 0,
+        level: 1,
+        clan: '',
+        p1: 0, p2: 0,
+        c1: 50, c2: 300, c3: 100,
+        casesToday: 0,
+        lastDate: '',
+        expiresAt: 0
     };
 
-    // daily reset
-    const today = new Date().toDateString();
-    if (S.lastDate !== today) {
-        S.casesToday = 0;
-        S.lastDate = today;
-        localStorage.setItem('m_lastDate', today);
-        localStorage.setItem('m_cases', '0');
-    }
-
-    // level config
+    // --- LEVELS CONFIG (10 уровней) ---
     const LEVELS = {
-        1: { regen: 10, nextCost: 1000, bonus: 0 },
-        2: { regen: 15, nextCost: 5000, bonus: 1 },
-        3: { regen: 22, nextCost: 15000, bonus: 2 },
-        4: { regen: 32, nextCost: 45000, bonus: 4 },
-        5: { regen: 45, nextCost: 99999, bonus: 8 }
+        1: { regen: 10, cost: 0, bonus: 0, label: '🌱 Садовод' },
+        2: { regen: 13, cost: 1000, bonus: 1, label: '🌿 Фермер' },
+        3: { regen: 17, cost: 3000, bonus: 2, label: '🌳 Агроном' },
+        4: { regen: 22, cost: 8000, bonus: 3, label: '🍊 Барон' },
+        5: { regen: 28, cost: 15000, bonus: 4, label: '👑 Граф' },
+        6: { regen: 35, cost: 30000, bonus: 6, label: '🏰 Князь' },
+        7: { regen: 43, cost: 60000, bonus: 8, label: '⚜️ Герцог' },
+        8: { regen: 52, cost: 100000, bonus: 10, label: '👑 Король' },
+        9: { regen: 62, cost: 200000, bonus: 15, label: '🌟 Император' },
+        10: { regen: 80, cost: 999999, bonus: 20, label: '🍊 Мандариновый Бог' }
     };
 
     function getLevelCfg() {
-        let lv = S.level;
-        if (lv > 5) lv = 5;
+        let lv = Math.min(S.level, 10);
         return LEVELS[lv] || LEVELS[1];
+    }
+
+    function getNextLevelCfg() {
+        let next = S.level + 1;
+        if (next > 10) return null;
+        return LEVELS[next];
     }
 
     function regenRate() { return getLevelCfg().regen; }
 
-    // --- UI helpers ---
-    function showAlert(msg) {
-        let el = document.getElementById('alertToast');
-        el.innerText = msg;
-        el.style.display = 'block';
-        clearTimeout(el._timer);
-        el._timer = setTimeout(() => el.style.display = 'none', 2500);
+    function levelProgress() {
+        let cfg = getLevelCfg();
+        let next = getNextLevelCfg();
+        if (!next) return 100;
+        let current = cfg.cost || 0;
+        let needed = next.cost;
+        let earned = S.mandarins - current;
+        return Math.min(100, (earned / (needed - current)) * 100);
     }
 
-    function updateUI() {
-        document.getElementById('score').innerText = Math.floor(S.mandarins).toLocaleString();
-        document.getElementById('statPower').innerText = '+' + S.clickPower;
-        let inc = S.clan ? Math.floor(S.income * 1.1) : S.income;
-        document.getElementById('statIncome').innerText = '+' + inc;
-        document.getElementById('statRegen').innerText = regenRate() + '/с';
-        let pct = Math.min(100, (S.energy / S.maxEnergy) * 100);
-        document.getElementById('energyBar').style.width = pct + '%';
-        document.getElementById('energyText').innerText = Math.floor(S.energy) + ' / ' + S.maxEnergy;
-        document.getElementById('maxEnergyText').innerText = S.maxEnergy;
-        document.getElementById('levelNum').innerText = S.level;
-        document.getElementById('p1Cost').innerText = S.c1.toLocaleString();
-        document.getElementById('p2Cost').innerText = S.c2.toLocaleString();
-        document.getElementById('p3Cost').innerText = S.c3.toLocaleString();
-        let left = Math.max(0, 5 - S.casesToday);
-        document.getElementById('casesLeft').innerText = left;
-        document.getElementById('casesLeftText').innerText = left;
-        if (S.clan) {
-            document.getElementById('myClanName').innerText = 'Клан: ' + S.clan;
-        } else {
-            document.getElementById('myClanName').innerText = 'Без клана';
+    // --- LOAD FROM LOCALSTORAGE ---
+    function loadState() {
+        S.mandarins = parseFloat(localStorage.getItem('m_score')) || 0;
+        S.energy = parseFloat(localStorage.getItem('m_energy')) || 1000;
+        S.maxEnergy = parseInt(localStorage.getItem('m_maxEnergy')) || 1000;
+        S.clickPower = parseInt(localStorage.getItem('m_power')) || 1;
+        S.income = parseInt(localStorage.getItem('m_income')) || 0;
+        S.level = parseInt(localStorage.getItem('m_level')) || 1;
+        S.clan = localStorage.getItem('m_clan') || '';
+        S.p1 = parseInt(localStorage.getItem('m_p1')) || 0;
+        S.p2 = parseInt(localStorage.getItem('m_p2')) || 0;
+        S.c1 = parseInt(localStorage.getItem('m_c1')) || 50;
+        S.c2 = parseInt(localStorage.getItem('m_c2')) || 300;
+        S.c3 = parseInt(localStorage.getItem('m_c3')) || 100;
+        S.casesToday = parseInt(localStorage.getItem('m_cases')) || 0;
+        S.lastDate = localStorage.getItem('m_lastDate') || '';
+        S.expiresAt = parseFloat(localStorage.getItem('m_expires')) || 0;
+
+        // daily reset
+        const today = new Date().toDateString();
+        if (S.lastDate !== today) {
+            S.casesToday = 0;
+            S.lastDate = today;
+            localStorage.setItem('m_lastDate', today);
+            localStorage.setItem('m_cases', '0');
         }
-        // profile sub
-        let sub = 'Мандариновый фермер';
-        if (S.level >= 5) sub = '🍊 Магнат';
-        else if (S.level >= 3) sub = '🍊 Барон';
-        document.getElementById('profileSub').innerText = sub;
-        saveState();
     }
 
     function saveState() {
@@ -501,113 +744,236 @@
         localStorage.setItem('m_c3', S.c3);
         localStorage.setItem('m_cases', S.casesToday);
         localStorage.setItem('m_lastDate', S.lastDate);
+        localStorage.setItem('m_expires', S.expiresAt);
+        syncWithBot();
+    }
+
+    // --- SYNC WITH BOT ---
+    function syncWithBot() {
         if (tg.sendData) {
-            tg.sendData(JSON.stringify({ action: 'sync', score: S.mandarins, level: S.level }));
+            tg.sendData(JSON.stringify({
+                action: 'sync_state',
+                mandarins: Math.floor(S.mandarins),
+                click_power: S.clickPower,
+                level: S.level,
+                max_energy: S.maxEnergy,
+                income: S.income,
+                clan_name: S.clan
+            }));
         }
     }
 
-    function showFloating(text, x, y) {
+    // --- UI UPDATE ---
+    function updateUI() {
+        const scoreEl = document.getElementById('score');
+        const oldVal = scoreEl.innerText;
+        const newVal = Math.floor(S.mandarins).toLocaleString();
+        if (oldVal !== newVal) {
+            scoreEl.classList.remove('pop');
+            void scoreEl.offsetWidth;
+            scoreEl.classList.add('pop');
+        }
+        scoreEl.innerText = newVal;
+
+        document.getElementById('statPower').innerText = '+' + S.clickPower;
+        let inc = S.clan ? Math.floor(S.income * 1.1) : S.income;
+        document.getElementById('statIncome').innerText = '+' + inc;
+        document.getElementById('statRegen').innerText = regenRate() + '/с';
+
+        let pct = Math.min(100, (S.energy / S.maxEnergy) * 100);
+        document.getElementById('energyBar').style.width = pct + '%';
+        document.getElementById('energyText').innerText = Math.floor(S.energy) + ' / ' + S.maxEnergy;
+        document.getElementById('maxEnergyText').innerText = S.maxEnergy;
+
+        document.getElementById('levelNum').innerText = S.level;
+        document.getElementById('levelProgress').style.width = levelProgress() + '%';
+
+        document.getElementById('p1Cost').innerText = S.c1.toLocaleString();
+        document.getElementById('p2Cost').innerText = S.c2.toLocaleString();
+        document.getElementById('p3Cost').innerText = S.c3.toLocaleString();
+
+        let left = Math.max(0, 5 - S.casesToday);
+        document.getElementById('casesLeft').innerText = left;
+        document.getElementById('casesLeftText').innerText = left;
+        document.getElementById('casesBadge').innerText = left;
+
+        if (S.clan) {
+            document.getElementById('myClanName').innerText = 'Клан: ' + S.clan;
+        } else {
+            document.getElementById('myClanName').innerText = 'Без клана';
+        }
+
+        let sub = getLevelCfg().label || 'Мандариновый фермер';
+        document.getElementById('profileSub').innerText = sub;
+
+        // subscription
+        let expireText = 'Неактивна';
+        if (S.expiresAt === -1) expireText = '🔥 Бессрочная';
+        else if (S.expiresAt > Date.now() / 1000) {
+            let diff = S.expiresAt - Date.now() / 1000;
+            let days = Math.floor(diff / 86400);
+            let hours = Math.floor((diff % 86400) / 3600);
+            expireText = `${days}д ${hours}ч`;
+        }
+        document.getElementById('profileSubExpire').innerHTML = '⏳ ' + expireText;
+
+        saveState();
+    }
+
+    // --- TOAST ---
+    function showToast(msg, type = '') {
+        let el = document.getElementById('toast');
+        el.innerText = msg;
+        el.className = 'toast ' + type;
+        el.style.display = 'block';
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => el.style.display = 'none', 2500);
+    }
+
+    // --- FLOATING TEXT ---
+    function showFloating(text, x, y, color = '#ffb347') {
         let container = document.getElementById('floatContainer');
         let el = document.createElement('div');
         el.className = 'float-text';
         el.innerText = text;
+        el.style.color = color;
         el.style.left = (x - 20) + 'px';
         el.style.top = (y - 20) + 'px';
         container.appendChild(el);
-        setTimeout(() => el.remove(), 700);
+        setTimeout(() => el.remove(), 800);
     }
 
     // --- TAP ---
     document.getElementById('mandarinBtn').addEventListener('click', (e) => {
-        if (S.energy < S.clickPower) { showAlert('⚡ Не хватает энергии!'); return; }
+        if (S.energy < S.clickPower) {
+            showToast('⚡ Не хватает энергии!', 'error');
+            return;
+        }
         S.energy -= S.clickPower;
         S.mandarins += S.clickPower;
         if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+
         let rect = e.currentTarget.getBoundingClientRect();
-        let cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
-        showFloating('+' + S.clickPower, cx-20, cy-30);
+        let cx = rect.left + rect.width/2;
+        let cy = rect.top + rect.height/2;
+        showFloating('+' + S.clickPower, cx - 30, cy - 40);
+
+        // ripple
+        let ripple = document.createElement('div');
+        ripple.className = 'tap-ripple';
+        ripple.style.left = (e.clientX - 50) + 'px';
+        ripple.style.top = (e.clientY - 50) + 'px';
+        ripple.style.width = '100px';
+        ripple.style.height = '100px';
+        ripple.style.position = 'fixed';
+        ripple.style.pointerEvents = 'none';
+        ripple.style.borderRadius = '50%';
+        ripple.style.background = 'rgba(255,180,70,0.15)';
+        ripple.style.transform = 'scale(0)';
+        ripple.style.animation = 'ripple 0.6s ease-out forwards';
+        document.body.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+
         updateUI();
-        saveState();
     });
 
     // --- BUY ---
     function buyUpgrade(type) {
-        if (type === 1 && S.mandarins >= S.c1) {
-            S.mandarins -= S.c1; S.p1++; S.income += 1; S.c1 = Math.floor(S.c1 * 1.4);
-        } else if (type === 2 && S.mandarins >= S.c2) {
-            S.mandarins -= S.c2; S.p2++; S.income += 5; S.c2 = Math.floor(S.c2 * 1.45);
-        } else if (type === 3 && S.mandarins >= S.c3) {
-            S.mandarins -= S.c3; S.clickPower += 1; S.c3 = Math.floor(S.c3 * 1.5);
-        } else { showAlert('Не хватает мандаринов!'); return; }
+        let cost;
+        if (type === 1) cost = S.c1;
+        else if (type === 2) cost = S.c2;
+        else if (type === 3) cost = S.c3;
+        
+        if (S.mandarins < cost) {
+            showToast('Не хватает мандаринов!', 'error');
+            return;
+        }
+        
+        S.mandarins -= cost;
+        if (type === 1) { S.p1++; S.income += 1; S.c1 = Math.floor(S.c1 * 1.4); }
+        else if (type === 2) { S.p2++; S.income += 5; S.c2 = Math.floor(S.c2 * 1.45); }
+        else if (type === 3) { S.clickPower += 1; S.c3 = Math.floor(S.c3 * 1.5); }
+        
         if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        showToast('✅ Куплено!', 'success');
         updateUI();
-        saveState();
     }
 
     function buyEnergyLimit() {
-        if (S.level < 2) { showAlert('Нужен 2 уровень!'); return; }
-        if (S.maxEnergy >= 2000) { showAlert('Лимит уже 2000'); return; }
-        if (S.mandarins < 5000) { showAlert('Нужно 5 000 🍊'); return; }
+        if (S.level < 2) { showToast('Нужен 2 уровень!', 'error'); return; }
+        if (S.maxEnergy >= 2000) { showToast('Лимит уже 2000', 'error'); return; }
+        if (S.mandarins < 5000) { showToast('Нужно 5 000 🍊', 'error'); return; }
         S.mandarins -= 5000;
         S.maxEnergy = 2000;
         S.energy = 2000;
-        showAlert('✅ Лимит энергии 2000');
+        showToast('✅ Лимит энергии 2000', 'success');
         updateUI();
-        saveState();
     }
 
     function upgradeLevel() {
-        let cfg = getLevelCfg();
-        if (S.level >= 5) { showAlert('🔥 Максимальный уровень!'); return; }
-        let cost = cfg.nextCost || 1000;
-        if (S.mandarins < cost) { showAlert('Нужно ' + cost.toLocaleString() + ' 🍊'); return; }
+        let next = getNextLevelCfg();
+        if (!next) { showToast('🔥 Максимальный уровень!', 'success'); return; }
+        let cost = next.cost;
+        if (S.mandarins < cost) {
+            showToast('Нужно ' + cost.toLocaleString() + ' 🍊', 'error');
+            return;
+        }
         S.mandarins -= cost;
         S.level += 1;
-        // bonus: + click power
-        let bonus = LEVELS[S.level]?.bonus || 0;
+        let bonus = next.bonus || 0;
         S.clickPower += bonus;
-        showAlert('⬆ Уровень ' + S.level + '! +' + bonus + ' к силе тапа');
+        showToast('⬆ Уровень ' + S.level + '! +' + bonus + ' к силе', 'success');
         if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
         updateUI();
-        saveState();
     }
 
     // --- CLAN ---
     function createClan() {
-        if (S.clan) { showAlert('У вас уже есть клан'); return; }
-        if (S.mandarins < 30000) { showAlert('30 000 🍊 для создания'); return; }
+        if (S.clan) { showToast('У вас уже есть клан', 'error'); return; }
+        if (S.mandarins < 30000) { showToast('30 000 🍊 для создания', 'error'); return; }
         S.mandarins -= 30000;
         S.clan = '🍊 Клан ' + userName;
-        showAlert('✅ Клан создан! +10% доход');
+        showToast('✅ Клан создан! +10% доход', 'success');
         updateUI();
-        saveState();
     }
 
-    // --- CASES (with animation) ---
+    // --- CASES ---
     function openCase() {
-        if (S.casesToday >= 5) { showAlert('Лимит 5 кейсов в день'); return; }
-        if (S.mandarins < 10000) { showAlert('Нужно 10 000 🍊'); return; }
+        if (S.casesToday >= 5) {
+            showToast('Лимит 5 кейсов в день', 'error');
+            return;
+        }
+        if (S.mandarins < 10000) {
+            showToast('Нужно 10 000 🍊', 'error');
+            return;
+        }
+        
         S.mandarins -= 10000;
         S.casesToday += 1;
+        
         let icon = document.getElementById('caseIcon');
         let resultDiv = document.getElementById('caseResult');
-        icon.classList.remove('spin');
-        void icon.offsetWidth;
-        icon.classList.add('spin');
-        resultDiv.innerText = '🌀 ...';
-
         let btn = document.getElementById('caseBtn');
+        
+        icon.className = 'case-icon spin';
+        resultDiv.innerText = '🌀 ...';
         btn.disabled = true;
         btn.style.opacity = '0.6';
 
-        // random result after animation
+        // имитация открытия
         setTimeout(() => {
             let roll = Math.random();
             let prize, msg;
+            
             if (roll < 0.04) {
                 prize = 15000 + Math.floor(Math.random() * 10000);
                 msg = '🎉 ДЖЕКПОТ! +' + prize.toLocaleString() + ' 🍊';
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                // шанс на подписку
+                if (roll < 0.01) {
+                    S.expiresAt = Date.now() / 1000 + 86400;
+                    msg += ' ⭐ +1 день подписки!';
+                }
             } else if (roll < 0.15) {
                 prize = 5000 + Math.floor(Math.random() * 4000);
                 msg = '⭐ Супер! +' + prize.toLocaleString() + ' 🍊';
@@ -615,95 +981,143 @@
                 prize = 800 + Math.floor(Math.random() * 2500);
                 msg = '📦 Выпало ' + prize.toLocaleString() + ' 🍊';
             }
+            
             S.mandarins += prize;
             resultDiv.innerText = msg;
-            icon.classList.remove('spin');
+            resultDiv.className = 'case-result win';
+            icon.className = 'case-icon';
             btn.disabled = false;
             btn.style.opacity = '1';
+            
+            // отправка в бота
+            if (tg.sendData) {
+                tg.sendData(JSON.stringify({
+                    action: 'open_case',
+                    roll_value: roll
+                }));
+            }
+            
             updateUI();
-            saveState();
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-        }, 900);
+        }, 1200);
     }
 
-    // --- LEADERBOARD (REAL, dynamic with local players) ---
-    function renderLeaderboard() {
+    // --- LEADERBOARD (реальный, через бота) ---
+    function loadLeaderboard() {
         let list = document.getElementById('leaderboardList');
-        // collect all players from localStorage (simulate real leaderboard)
-        let players = [];
-        // current user
-        players.push({ name: userName || 'Игрок', score: Math.floor(S.mandarins), level: S.level, id: userId });
-        // mock other players (but keep them static to simulate real)
-        let mock = [
-            { name: 'CryptoKing', score: 187200, level: 4, id: 1111 },
-            { name: 'MandarinLord', score: 142500, level: 3, id: 2222 },
-            { name: 'TapMachine', score: 98400, level: 3, id: 3333 },
-            { name: 'SatoshiFruit', score: 71200, level: 2, id: 4444 },
-            { name: 'Kllscmr', score: 999999, level: 5, id: 6589732981 }
-        ];
-        // filter out duplicates by id
-        let existingIds = new Set(players.map(p => p.id));
-        for (let m of mock) {
-            if (!existingIds.has(m.id)) {
-                players.push(m);
-                existingIds.add(m.id);
-            }
+        list.innerHTML = '<div style="color:#8e9297;text-align:center;">Загрузка...</div>';
+        
+        if (tg.sendData) {
+            tg.sendData(JSON.stringify({
+                action: 'get_leaderboard'
+            }));
         }
-        // sort by score desc
-        players.sort((a,b) => b.score - a.score);
-        let html = '';
-        let rank = 1;
-        for (let p of players) {
-            if (p.id === 6589732981) continue; // exclude kllscmr from list? keep as joke
-            let isYou = (p.id === userId);
-            html += `<div class="leader-row" style="${isYou ? 'background:rgba(255,180,70,0.06);border-radius:12px;padding:4px 8px;' : ''}">
-                <span>#${rank} ${isYou ? '⭐' : ''} ${p.name} (Ур.${p.level})</span>
-                <span style="color:#ffb347;font-weight:700;">${p.score.toLocaleString()} 🍊</span>
-            </div>`;
-            rank++;
+        
+        // fallback: локальные данные
+        setTimeout(() => {
+            let mock = [
+                { name: 'CryptoKing', score: 187200, level: 4, id: 1111 },
+                { name: 'MandarinLord', score: 142500, level: 3, id: 2222 },
+                { name: 'TapMachine', score: 98400, level: 3, id: 3333 },
+                { name: 'SatoshiFruit', score: 71200, level: 2, id: 4444 },
+                { name: '🍊 ' + userName, score: Math.floor(S.mandarins), level: S.level, id: userId }
+            ];
+            mock.sort((a,b) => b.score - a.score);
+            let html = '';
+            mock.forEach((p, i) => {
+                let isMe = p.id === userId;
+                html += `<div class="leader-row${isMe ? ' me' : ''}">
+                    <span><span class="leader-rank">#${i+1}</span> ${isMe ? '⭐' : ''} ${p.name} (Ур.${p.level})</span>
+                    <span style="color:#ffb347;font-weight:700;">${p.score.toLocaleString()} 🍊</span>
+                </div>`;
+            });
+            list.innerHTML = html;
+        }, 300);
+    }
+
+    // --- PROFILE ---
+    function loadProfile() {
+        updateUI();
+        // дополнительно запросить у бота статус подписки
+        if (tg.sendData) {
+            tg.sendData(JSON.stringify({
+                action: 'get_profile'
+            }));
         }
-        list.innerHTML = html;
     }
 
     // --- TABS ---
     function switchTab(tab, btn) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        
         let target = document.getElementById('tab-' + tab);
         if (target) target.classList.add('active');
-        if (btn && btn.classList) btn.classList.add('active');
-        else {
-            // find nav item by data
-            document.querySelectorAll('.nav-item').forEach(el => {
-                if (el.innerText.toLowerCase().includes(tab)) el.classList.add('active');
-            });
-        }
+        if (btn) btn.classList.add('active');
+        
         let energyBox = document.getElementById('energyBoxUI');
         if (tab === 'clicker') energyBox.style.display = 'block';
         else energyBox.style.display = 'none';
-        if (tab === 'clan') renderLeaderboard();
+        
+        if (tab === 'clan') loadLeaderboard();
+        if (tab === 'profile') loadProfile();
+        if (tab === 'cases') updateUI();
     }
+
+    // --- BOT MESSAGES (WebApp) ---
+    tg.onEvent('web_app_data', (data) => {
+        try {
+            let response = JSON.parse(data);
+            if (response.action === 'leaderboard') {
+                let list = document.getElementById('leaderboardList');
+                let html = '';
+                let players = response.data || [];
+                players.forEach((p, i) => {
+                    let isMe = p.id === userId;
+                    html += `<div class="leader-row${isMe ? ' me' : ''}">
+                        <span><span class="leader-rank">#${i+1}</span> ${isMe ? '⭐' : ''} ${p.name} (Ур.${p.level})</span>
+                        <span style="color:#ffb347;font-weight:700;">${p.score.toLocaleString()} 🍊</span>
+                    </div>`;
+                });
+                list.innerHTML = html;
+            }
+            if (response.action === 'profile') {
+                if (response.expires_at !== undefined) {
+                    S.expiresAt = response.expires_at;
+                    localStorage.setItem('m_expires', S.expiresAt);
+                    updateUI();
+                }
+            }
+        } catch(e) {}
+    });
 
     // --- REGEN & INCOME TICK ---
     setInterval(() => {
-        // income
         let bonus = S.clan ? 1.1 : 1.0;
         if (S.income > 0) {
             S.mandarins += (S.income / 10) * bonus;
         }
-        // energy regen
         if (S.energy < S.maxEnergy) {
             S.energy = Math.min(S.maxEnergy, S.energy + (regenRate() / 10));
         }
         updateUI();
-        saveState();
     }, 100);
 
-    // init
+    // --- INIT ---
+    loadState();
     updateUI();
-    renderLeaderboard();
-    // ensure energy shows
     document.getElementById('energyBoxUI').style.display = 'block';
+    
+    // запрос статуса подписки при старте
+    setTimeout(() => {
+        if (tg.sendData) {
+            tg.sendData(JSON.stringify({ action: 'get_profile' }));
+        }
+    }, 500);
+
+    console.log('🍊 Мандариновая Ферма загружена!');
+    console.log('👤 Пользователь:', userId, userName);
+    console.log('📊 Уровень:', S.level, 'Баланс:', S.mandarins);
 </script>
 </body>
 </html>
