@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Мандариновая Ферма</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: var(--tg-theme-bg-color, #18191c);
+            --text-color: var(--tg-theme-text-color, #ffffff);
+            --hint-color: var(--tg-theme-hint-color, #8e9297);
+            --accent-color: #ffa500;
+            --card-bg: rgba(255, 255, 255, 0.05);
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .header { text-align: center; margin-bottom: 15px; }
+        .score { font-size: 36px; font-weight: bold; color: var(--accent-color); margin: 5px 0; }
+        .sub-score { font-size: 14px; color: var(--hint-color); }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .tab-btn {
+            flex: 1;
+            background: var(--card-bg);
+            border: none;
+            color: var(--text-color);
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tab-btn.active { background: var(--accent-color); color: #000; }
+
+        .tab-content { display: none; width: 100%; max-width: 400px; flex-direction: column; align-items: center; }
+        .tab-content.active { display: flex; }
+
+        /* КЛИКЕР */
+        .mandarin-btn {
+            background: none;
+            border: none;
+            font-size: 110px;
+            cursor: pointer;
+            transition: transform 0.08s ease;
+            outline: none;
+            margin: 20px 0;
+        }
+        .mandarin-btn:active { transform: scale(0.85); }
+        .energy-bar-container {
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 10px;
+            height: 14px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .energy-bar {
+            background: linear-gradient(90deg, #ff8c00, #ffa500);
+            height: 100%;
+            width: 100%;
+            transition: width 0.2s;
+        }
+        .energy-text { font-size: 13px; color: var(--hint-color); margin-bottom: 15px; }
+
+        /* УЛУЧШЕНИЯ И КЕЙСЫ */
+        .card {
+            background: var(--card-bg);
+            width: 100%;
+            border-radius: 12px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+        }
+        .card-info h4 { margin: 0 0 4px 0; font-size: 15px; }
+        .card-info p { margin: 0; font-size: 12px; color: var(--hint-color); }
+        .action-btn {
+            background: var(--accent-color);
+            border: none;
+            color: #000;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .action-btn:disabled { background: #444; color: #777; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>🍊 Мандариновая Ферма</h1>
+        <div class="score" id="score">0</div>
+        <div class="sub-score" id="income">+0 / сек</div>
+    </div>
+
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('clicker')">Тап</button>
+        <button class="tab-btn" onclick="switchTab('shop')">Ферма</button>
+        <button class="tab-btn" onclick="switchTab('cases')">Кейсы</button>
+    </div>
+
+    <!-- ВКЛАДКА КЛИКЕРА -->
+    <div id="clicker" class="tab-content active">
+        <button class="mandarin-btn" id="clickBtn" onclick="tapMandarin()">🍊</button>
+        <div class="energy-bar-container">
+            <div class="energy-bar" id="energyBar"></div>
+        </div>
+        <div class="energy-text" id="energyText">Энергия: 1000 / 1000</div>
+    </div>
+
+    <!-- ВКЛАДКА МАГАЗИНА / ПАССИВКИ -->
+    <div id="shop" class="tab-content">
+        <div class="card">
+            <div class="card-info">
+                <h4>👵 Бабушкина рассада</h4>
+                <p>Доход: +1 манд/сек | Цена: <span id="p1Cost">50</span></p>
+            </div>
+            <button class="action-btn" onclick="buyUpgrade(1)">Купить</button>
+        </div>
+        <div class="card">
+            <div class="card-info">
+                <h4>🏡 Теплица в Сочи</h4>
+                <p>Доход: +5 манд/сек | Цена: <span id="p2Cost">300</span></p>
+            </div>
+            <button class="action-btn" onclick="buyUpgrade(2)">Купить</button>
+        </div>
+        <div class="card">
+            <div class="card-info">
+                <h4>⚡️ Сила клика (+1)</h4>
+                <p>Увеличивает урон за тап | Цена: <span id="p3Cost">100</span></p>
+            </div>
+            <button class="action-btn" onclick="buyUpgrade(3)">Кач</button>
+        </div>
+    </div>
+
+    <!-- ВКЛАДКА КЕЙСОВ (РУЛЕТКА С ПОДПИСКОЙ) -->
+    <div id="cases" class="tab-content">
+        <div class="card" style="flex-direction: column; align-items: stretch; text-align: center;">
+            <div class="card-info" style="margin-bottom: 10px;">
+                <h4>🎁 Мандариновый Кейс</h4>
+                <p>Шанс выбить подписку на 1 день! Остальное — мандарины.</p>
+                <p style="color: var(--accent-color); margin-top: 5px;">Стоимость: <b>500 мандаринов</b></p>
+            </div>
+            <button class="action-btn" style="width: 100%; padding: 12px;" onclick="openCase()">Открыть кейс</button>
+        </div>
+        <div id="caseResult" style="margin-top: 15px; font-weight: bold; text-align: center; color: var(--accent-color);"></div>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+
+        let state = {
+            mandarins: parseInt(localStorage.getItem('m_score')) || 0,
+            energy: 1000,
+            maxEnergy: 1000,
+            clickPower: parseInt(localStorage.getItem('m_power')) || 1,
+            income: parseInt(localStorage.getItem('m_income')) || 0,
+            p1Count: parseInt(localStorage.getItem('m_p1')) || 0,
+            p2Count: parseInt(localStorage.getItem('m_p2')) || 0,
+            p1Cost: parseInt(localStorage.getItem('m_c1')) || 50,
+            p2Cost: parseInt(localStorage.getItem('m_c2')) || 300,
+            p3Cost: parseInt(localStorage.getItem('m_c3')) || 100
+        };
+
+        function save() {
+            localStorage.setItem('m_score', state.mandarins);
+            localStorage.setItem('m_power', state.clickPower);
+            localStorage.setItem('m_income', state.income);
+            localStorage.setItem('m_p1', state.p1Count);
+            localStorage.setItem('m_p2', state.p2Count);
+            localStorage.setItem('m_c1', state.p1Cost);
+            localStorage.setItem('m_c2', state.p2Cost);
+            localStorage.setItem('m_c3', state.p3Cost);
+        }
+
+        function updateUI() {
+            document.getElementById('score').innerText = Math.floor(state.mandarins);
+            document.getElementById('income').innerText = `+${state.income} / сек`;
+            document.getElementById('energyBar').style.width = (state.energy / state.maxEnergy * 100) + '%';
+            document.getElementById('energyText').innerText = `Энергия: ${Math.floor(state.energy)} / ${state.maxEnergy}`;
+            
+            document.getElementById('p1Cost').innerText = state.p1Cost;
+            document.getElementById('p2Cost').innerText = state.p2Cost;
+            document.getElementById('p3Cost').innerText = state.p3Cost;
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        function tapMandarin() {
+            if (state.energy >= state.clickPower) {
+                state.energy -= state.clickPower;
+                state.mandarins += state.clickPower;
+                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                updateUI();
+                save();
+            }
+        }
+
+        function buyUpgrade(type) {
+            if (type === 1 && state.mandarins >= state.p1Cost) {
+                state.mandarins -= state.p1Cost;
+                state.p1Count++;
+                state.income += 1;
+                state.p1Cost = Math.floor(state.p1Cost * 1.3);
+            } else if (type === 2 && state.mandarins >= state.p2Cost) {
+                state.mandarins -= state.p2Cost;
+                state.p2Count++;
+                state.income += 5;
+                state.p2Cost = Math.floor(state.p2Cost * 1.35);
+            } else if (type === 3 && state.mandarins >= state.p3Cost) {
+                state.mandarins -= state.p3Cost;
+                state.clickPower += 1;
+                state.p3Cost = Math.floor(state.p3Cost * 1.5);
+            }
+            updateUI();
+            save();
+        }
+
+        function openCase() {
+            if (state.mandarins < 500) {
+                document.getElementById('caseResult').innerText = "❌ Не хватает мандаринов (нужно 500)!";
+                return;
+            }
+            state.mandarins -= 500;
+            
+            // Шанс выпадения подписки: 1% (0.01)
+            let roll = Math.random();
+            let resDiv = document.getElementById('caseResult');
+            
+            if (roll < 0.01) {
+                resDiv.innerHTML = "🎉 СВЕРШИЛОСЬ! Выпала подписка на 1 день! Активируем...";
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                // Отправляем боту сигнал выдать подписку через WebApp data
+                setTimeout(() => {
+                    tg.sendData(JSON.stringify({action: "win_sub", days: 1}));
+                }, 1500);
+            } else {
+                let prize = Math.floor(Math.random() * 200) + 50; // от 50 до 250 мандаринов
+                state.mandarins += prize;
+                resDiv.innerHTML = `🎁 В кейсе оказалось ${prize} мандаринов! Повезет в следующий раз.`;
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
+            }
+            updateUI();
+            save();
+        }
+
+        // Игровой тик (пассивный доход и восстановление энергии)
+        setInterval(() => {
+            if (state.income > 0) {
+                state.mandarins += state.income / 10;
+            }
+            if (state.energy < state.maxEnergy) {
+                state.energy = Math.min(state.maxEnergy, state.energy + (state.maxEnergy / 50));
+            }
+            updateUI();
+            save();
+        }, 100);
+    </script>
+</body>
+</html>
