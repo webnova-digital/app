@@ -8,8 +8,12 @@
     <style>
         * { box-sizing: border-box; }
         body {
-            background-color: #0b0c10;
-            background-image: radial-gradient(circle at 50% 20%, #1a1c29 0%, #0b0c10 100%);
+            /* Премиальный ночной градиентный фон с неоновыми переливами */
+            background-color: #060810;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(255, 140, 0, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.12) 0%, transparent 40%),
+                linear-gradient(135deg, #090d16 0%, #030407 100%);
             color: #ffffff;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
@@ -57,14 +61,14 @@
         .balance-card {
             width: 100%;
             max-width: 420px;
-            background: rgba(24, 27, 34, 0.85);
+            background: rgba(18, 22, 33, 0.85);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 20px;
             padding: 15px;
             text-align: center;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            margin-bottom: 15px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            margin-bottom: 12px;
         }
         .balance-title { font-size: 11px; color: #8e9297; text-transform: uppercase; letter-spacing: 1.5px; }
         .balance-score { font-size: 38px; font-weight: 900; color: #ffb347; margin: 4px 0 12px 0; text-shadow: 0 0 20px rgba(255,179,71,0.3); }
@@ -72,7 +76,7 @@
         .stats-row {
             display: flex;
             justify-content: space-between;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.35);
             border-radius: 12px;
             padding: 8px;
             font-size: 12px;
@@ -86,7 +90,7 @@
         .energy-container {
             width: 100%;
             max-width: 420px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         .energy-info { display: flex; justify-content: space-between; font-size: 12px; color: #8e9297; margin-bottom: 5px; }
         .energy-bar-bg {
@@ -117,7 +121,7 @@
         .mandarin-avatar-btn {
             background: none;
             border: none;
-            font-size: 140px;
+            font-size: 130px;
             cursor: pointer;
             outline: none;
             transition: transform 0.08s ease;
@@ -136,7 +140,7 @@
         .tab-content.active { display: flex; }
 
         .card {
-            background: rgba(24, 27, 34, 0.85);
+            background: rgba(18, 22, 33, 0.85);
             border: 1px solid rgba(255,255,255,0.06);
             border-radius: 14px;
             padding: 12px 15px;
@@ -159,17 +163,17 @@
         }
         .action-btn:active { transform: scale(0.95); }
 
-        /* НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ */
+        /* НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ (Добавлен Клан) */
         .bottom-nav {
             width: 100%;
             max-width: 420px;
-            background: rgba(18, 20, 26, 0.95);
+            background: rgba(12, 15, 22, 0.95);
             border: 1px solid rgba(255,255,255,0.08);
             border-radius: 18px;
             display: flex;
             justify-content: space-around;
-            padding: 8px 4px;
-            backdrop-filter: blur(10px);
+            padding: 8px 2px;
+            backdrop-filter: blur(12px);
             margin-top: auto;
         }
         .nav-item {
@@ -179,12 +183,12 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            font-size: 10px;
+            font-size: 9px;
             cursor: pointer;
             flex: 1;
             transition: 0.2s;
         }
-        .nav-item span.icon { font-size: 18px; margin-bottom: 2px; }
+        .nav-item span.icon { font-size: 16px; margin-bottom: 2px; }
         .nav-item.active { color: #ffb347; }
     </style>
 </head>
@@ -193,7 +197,7 @@
     <!-- ВЕРХ -->
     <div class="top-panel">
         <div class="user-level-badge" id="lvlBadge">🍊 Ур. 1</div>
-        <button class="rewards-btn" onclick="switchTab('cases', document.querySelectorAll('.nav-item')[2])">🎁 Кейсы (10к)</button>
+        <button class="rewards-btn" onclick="switchTab('cases', document.querySelectorAll('.nav-item')[2])">🎁 Кейсы (<span id="casesLeft">5</span>/5)</button>
     </div>
 
     <!-- БАЛАНС И СТАТИСТИКА -->
@@ -261,19 +265,29 @@
         </div>
     </div>
 
-    <!-- ВКЛАДКА 3: КЕЙСЫ -->
+    <!-- ВКЛАДКА 3: КЕЙСЫ (Лимит 5 раз в день) -->
     <div id="tab-cases" class="tab-content" style="align-items: center; justify-content: center;">
         <div class="card" style="flex-direction: column; text-align: center; padding: 20px; width: 100%;">
             <div style="font-size: 45px; margin-bottom: 8px;">📦</div>
             <h4 style="font-size: 16px; margin-bottom: 5px;">Премиум Кейс</h4>
-            <p style="color: #8e9297; font-size: 12px; margin-bottom: 12px;">Шанс выиграть подписку на 1 день! Или крупный куш мандаринов.</p>
+            <p style="color: #8e9297; font-size: 12px; margin-bottom: 8px;">Шанс выиграть подписку на 1 день! Доступно открытий сегодня: <span id="casesLeftText" style="color:#ffb347; font-weight:bold;">5</span>/5</p>
             <p style="color: #ffb347; font-weight: bold; margin-bottom: 15px;">Цена: 10 000 мандаринов</p>
-            <button class="action-btn" style="width: 100%; padding: 12px;" onclick="openCase()">Открыть кейс (10k)</button>
+            <button class="action-btn" style="width: 100%; padding: 12px;" onclick="openCase()">Открыть кейс</button>
             <div id="caseResult" style="margin-top: 12px; font-weight: bold; color: #ffb347; font-size: 13px;"></div>
         </div>
     </div>
 
-    <!-- ВКЛАДКА 4: ПРОФИЛЬ -->
+    <!-- ВКЛАДКА 4: КЛАНЫ -->
+    <div id="tab-clan" class="tab-content" style="padding-top: 10px;">
+        <div class="card" style="flex-direction: column; text-align: center; padding: 15px;">
+            <div style="font-size: 40px; margin-bottom: 5px;">🛡️</div>
+            <h4 style="font-size: 15px; margin-bottom: 5px;">Мандариновый Синдикат</h4>
+            <p style="color: #8e9297; font-size: 12px; margin-bottom: 10px;">Объединяйтесь с другими фармерами для получения бонусов к доходу.</p>
+            <button class="action-btn" style="width: 100%;" onclick="alert('Вы состоите в клане!')">Вступить в клан</button>
+        </div>
+    </div>
+
+    <!-- ВКЛАДКА 5: ПРОФИЛЬ -->
     <div id="tab-profile" class="tab-content" style="padding-top: 20px; align-items: center; text-align: center;">
         <div style="font-size: 50px; margin-bottom: 10px;">👤</div>
         <h3 id="profileName" style="margin: 0 0 5px 0;">Игрок</h3>
@@ -300,6 +314,10 @@
             <span class="icon">🎁</span>
             <span>Кейсы</span>
         </button>
+        <button class="nav-item" onclick="switchTab('clan', this)">
+            <span class="icon">🛡️</span>
+            <span>Кланы</span>
+        </button>
         <button class="nav-item" onclick="switchTab('profile', this)">
             <span class="icon">👤</span>
             <span>Профиль</span>
@@ -310,7 +328,6 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Данные профиля из Telegram
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             let u = tg.initDataUnsafe.user;
             document.getElementById('profileName').innerText = u.first_name || 'Игрок';
@@ -328,10 +345,23 @@
             p1Cost: parseInt(localStorage.getItem('m_c1')) || 50,
             p2Cost: parseInt(localStorage.getItem('m_c2')) || 300,
             p3Cost: parseInt(localStorage.getItem('m_c3')) || 100,
+            casesToday: parseInt(localStorage.getItem('m_cases')) || 0,
+            lastCaseDay: localStorage.getItem('m_case_day') || new Date().toDateString(),
             lastSaveTime: parseInt(localStorage.getItem('m_time')) || Date.now()
         };
 
-        // Оффлайн-фарм
+        // Проверка сброса лимита кейсов по дням в localStorage
+        let todayStr = new Date().toDateString();
+        if (state.lastCaseDay !== todayStr) {
+            state.casesToday = 0;
+            state.lastCaseDay = todayStr;
+            localStorage.setItem('m_cases', 0);
+            localStorage.setItem('m_case_day', todayStr);
+        }
+
+        document.getElementById('casesLeft').innerText = 5 - state.casesToday;
+        document.getElementById('casesLeftText').innerText = 5 - state.casesToday;
+
         let offlineElapsed = (Date.now() - state.lastSaveTime) / 1000;
         if (offlineElapsed > 1 && state.income > 0) {
             state.mandarins += offlineElapsed * state.income;
@@ -346,6 +376,7 @@
             localStorage.setItem('m_c1', state.p1Cost);
             localStorage.setItem('m_c2', state.p2Cost);
             localStorage.setItem('m_c3', state.p3Cost);
+            localStorage.setItem('m_cases', state.casesToday);
             localStorage.setItem('m_time', Date.now());
         }
 
@@ -359,6 +390,8 @@
             document.getElementById('p1Cost').innerText = state.p1Cost.toLocaleString();
             document.getElementById('p2Cost').innerText = state.p2Cost.toLocaleString();
             document.getElementById('p3Cost').innerText = state.p3Cost.toLocaleString();
+            document.getElementById('casesLeft').innerText = Math.max(0, 5 - state.casesToday);
+            document.getElementById('casesLeftText').innerText = Math.max(0, 5 - state.casesToday);
         }
 
         function switchTab(tabName, btnElement) {
@@ -370,7 +403,6 @@
                 btnElement.classList.add('active');
             }
             
-            // Скрыть полоску энергии если не на вкладке кликера
             let energyBox = document.getElementById('energyBoxUI');
             if (tabName === 'clicker') {
                 energyBox.style.display = 'block';
@@ -436,22 +468,30 @@
         }
 
         function openCase() {
+            if (state.casesToday >= 5) {
+                document.getElementById('caseResult').innerText = "❌ Лимит: 5 кейсов в день исчерпан!";
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+                return;
+            }
             if (state.mandarins < 10000) {
                 document.getElementById('caseResult').innerText = "❌ Нужно 10 000 мандаринов!";
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
                 return;
             }
             state.mandarins -= 10000;
+            state.casesToday++;
             
             let roll = Math.random();
             let resDiv = document.getElementById('caseResult');
             
+            // Отправляем данные в бота для проверки/выдачи
+            if (tg.sendData) {
+                tg.sendData(JSON.stringify({action: "open_case", roll_value: roll}));
+            }
+
             if (roll < 0.01) {
-                resDiv.innerHTML = "🎉 ДЖЕКПОТ! Подписка на 1 день активируется в боте...";
+                resDiv.innerHTML = "🎉 ДЖЕКПОТ! Вы выиграли подписку на 1 день!";
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                setTimeout(() => {
-                    tg.sendData(JSON.stringify({action: "win_sub", days: 1}));
-                }, 1500);
             } else {
                 let prize = Math.floor(Math.random() * 3000) + 1000;
                 state.mandarins += prize;
@@ -462,13 +502,12 @@
             save();
         }
 
-        // Тик пассивного дохода и восстановления энергии
         setInterval(() => {
             if (state.income > 0) {
                 state.mandarins += state.income / 10;
             }
             if (state.energy < state.maxEnergy) {
-                state.energy = Math.min(state.maxEnergy, state.energy + 1); // 10 энергии в сек
+                state.energy = Math.min(state.maxEnergy, state.energy + 1);
             }
             updateUI();
             save();
